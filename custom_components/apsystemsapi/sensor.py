@@ -167,13 +167,13 @@ class ApsystemsSensorToday(SensorEntity):
         now = datetime.now()
         try:
             inverter_statistic = await self._api.get_graph(inverter=self._inverter.inverter_dev_id, year=now.year,
-                                                           month=now.month, day=now.day)
+                                                           month=now.strftime('%m'), day=now.strftime('%d'))
             self._state = inverter_statistic.totalEnergy
         except TokenExpired:
             await asyncio.sleep(3)
             await self._api.refresh_login()
         inverter_statistic = await self._api.get_graph(inverter=self._inverter.inverter_dev_id, year=now.year,
-                                                       month=now.month, day=now.day)
+                                                       month=now.strftime('%m'), day=now.strftime('%d'))
         self._state = inverter_statistic.totalEnergy
 
     @property
