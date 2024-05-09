@@ -19,6 +19,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from apsystems_api import Api as ApApi
 from apsystems_api import TokenExpired
+from apsystems_api import DeviceOffline
 from datetime import datetime
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -87,6 +88,9 @@ class ApsystemsSensorNow(SensorEntity):
         except TokenExpired:
             await self._api.refresh_login()
             await asyncio.sleep(3)
+        except DeviceOffline:
+            self._state = 0
+            return
         inverter_realtime = await self._api.get_inverter_realtime(self._inverter.inverter_dev_id)
         self._state = inverter_realtime.power
 
